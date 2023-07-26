@@ -1,0 +1,4 @@
+github.com/mayef/cms v0.0.0-20230726060214-c891b0619485 h1:MtJoK4RV7O5zOL+ht0i5Mym2eDeiuZPgfOqIu78YqU0=
+github.com/mayef/cms v0.0.0-20230726060214-c891b0619485/go.mod h1:zIGXefjBNIePTUpDpQW+YwNKNGFXe+ZGj7oyRssJuFs=
+github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
+github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
