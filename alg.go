@@ -6,6 +6,8 @@ type DigestAlgorithm string
 
 // RFC 5751 page 29
 const (
+	MD5         = DigestAlgorithm("md5")   // Deprecated
+	SHA1        = DigestAlgorithm("sha-1") // Deprecated
 	SHA256      = DigestAlgorithm("sha-256")
 	SHA384      = DigestAlgorithm("sha-384")
 	SHA512      = DigestAlgorithm("sha-512")
@@ -23,10 +25,10 @@ const (
 func CanonicalizeDigestAlgorithm(algorithm string) DigestAlgorithm {
 	algorithm = strings.ToLower(algorithm)
 	switch algorithm {
-	// case "md5", "md-5", "rsa-md5":
-	// 	return MD5
-	// case "sha1", "sha-1", "rsa-sha1":
-	// 	return SHA1
+	case "md5", "md-5", "rsa-md5":
+		return MD5
+	case "sha1", "sha-1", "rsa-sha1":
+		return SHA1
 	case "sha256", "sha-256":
 		return SHA256
 	case "sha384", "sha-384":

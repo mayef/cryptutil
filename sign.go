@@ -36,14 +36,14 @@ func Sign(content []byte, cert *x509.Certificate, pri crypto.PrivateKey, algorit
 		signedData.SetDigestAlgorithm(cms.OIDDigestAlgorithmSHAT512)
 	case SHA3_224:
 		signedData.SetDigestAlgorithm(cms.OIDDigestAlgorithmSHAT224)
-	case BLAKE2S_256:
-		signedData.SetDigestAlgorithm(cms.OIDDigestAlgorithmBlake2s256)
-	case BLAKE2B_256:
-		signedData.SetDigestAlgorithm(cms.OIDDigestAlgorithmBlake2b256)
-	case BLAKE2B_384:
-		signedData.SetDigestAlgorithm(cms.OIDDigestAlgorithmBlake2b384)
-	case BLAKE2B_512:
-		signedData.SetDigestAlgorithm(cms.OIDDigestAlgorithmBlake2b512)
+	// case BLAKE2S_256:
+	// 	signedData.SetDigestAlgorithm(cms.OIDDigestAlgorithmBlake2s256)
+	// case BLAKE2B_256:
+	// 	signedData.SetDigestAlgorithm(cms.OIDDigestAlgorithmBlake2b256)
+	// case BLAKE2B_384:
+	// 	signedData.SetDigestAlgorithm(cms.OIDDigestAlgorithmBlake2b384)
+	// case BLAKE2B_512:
+	// 	signedData.SetDigestAlgorithm(cms.OIDDigestAlgorithmBlake2b512)
 	default:
 		return nil, errors.Errorf("Unsupported algorithm: %s", algorithm)
 	}
