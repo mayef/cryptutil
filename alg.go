@@ -22,7 +22,7 @@ const (
 	BLAKE2B_512 = DigestAlgorithm("blake2b-512")
 )
 
-func CanonicalizeDigestAlgorithm(algorithm string) DigestAlgorithm {
+func CanonicalDigestAlgorithm(algorithm string) DigestAlgorithm {
 	algorithm = strings.ToLower(algorithm)
 	switch algorithm {
 	case "md5", "md-5", "rsa-md5":
