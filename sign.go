@@ -3,7 +3,6 @@ package cryptutil
 import (
 	"crypto"
 	"crypto/sha256"
-	"crypto/subtle"
 	"crypto/x509"
 	"encoding/hex"
 	"encoding/pem"
@@ -77,25 +76,29 @@ func Verify(signature []byte, content []byte, signerCert *x509.Certificate) erro
 	if err != nil {
 		return errors.New("Invalid cms signature.")
 	}
+	if len(p7.Certificates) == 0 {
+		p7.Certificates = []*x509.Certificate{signerCert}
+	}
 
 	// // test if signerCert is a fullchain certificate
 	// if len(signerCert.IssuingCertificateURL) > 0 {
 	// 	return errors.Errorf("The certificate of signer is not a fullchain certificate.")
 	// }
 
+	// no need to check the certificate in the signature with the provided signerCert. check later in p7.Verify().
 	// 检查证书是否一致（由于使用自签名证书，无法验证证书链，只能对比证书指纹）~~TODO 签名证书可能是单证书，而给出的可能是证书链，需要从证书链中找到签名证书~~
-	{
-		cert, err := GetCertFromPKCS7Signature(signature)
-		if err != nil {
-			return errors.WithStack(err)
-		}
+	// {
+	// 	cert, err := GetCertFromPKCS7Signature(signature)
+	// 	if err != nil {
+	// 		return errors.WithStack(err)
+	// 	}
 
-		certFingerprint := GetFingerprintFromCert(cert)
-		signerCertFingerprint := GetFingerprintFromCert(signerCert)
-		if subtle.ConstantTimeCompare([]byte(certFingerprint), []byte(signerCertFingerprint)) != 1 {
-			return errors.Errorf("Certificate fingerprint mismatch\n\tExpected: %s\n\tActual: %s", signerCertFingerprint, certFingerprint)
-		}
-	}
+	// 	certFingerprint := GetFingerprintFromCert(cert)
+	// 	signerCertFingerprint := GetFingerprintFromCert(signerCert)
+	// 	if subtle.ConstantTimeCompare([]byte(certFingerprint), []byte(signerCertFingerprint)) != 1 {
+	// 		return errors.Errorf("Certificate fingerprint mismatch\n\tExpected: %s\n\tActual: %s", signerCertFingerprint, certFingerprint)
+	// 	}
+	// }
 
 	p7.Content = content
 
