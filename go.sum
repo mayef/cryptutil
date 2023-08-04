@@ -1,7 +1,5 @@
-github.com/mayef/cms v1.2.0 h1:klDkvMapY7X4120pmKiEdYGCirSqyl4e0Qxbi46je3U=
-github.com/mayef/cms v1.2.0/go.mod h1:xjA7jvFEOcAR4QnJez/XVEd7Z8d0kKJu7+EPnphxQ98=
-github.com/mayef/cms v1.2.1 h1:t93qK4B+CkUOnkaFqcFQ7/wnMZNIMjcbDXBijJO1ZHQ=
-github.com/mayef/cms v1.2.1/go.mod h1:xjA7jvFEOcAR4QnJez/XVEd7Z8d0kKJu7+EPnphxQ98=
+github.com/mayef/cms v1.3.2 h1:SLmCUlO7NoCAznMlREpD+O/DMyP9z0IQm9NZUs+1cM4=
+github.com/mayef/cms v1.3.2/go.mod h1:xjA7jvFEOcAR4QnJez/XVEd7Z8d0kKJu7+EPnphxQ98=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 golang.org/x/crypto v0.11.0 h1:6Ewdq3tDic1mg5xRO4milcWCfMVQhI4NkqWWvqejpuA=
