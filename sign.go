@@ -19,6 +19,10 @@ func Sign(content []byte, cert *x509.Certificate, pri crypto.PrivateKey, algorit
 		return nil, errors.Errorf("Cannot initialize signed data: %s", err)
 	}
 	switch algorithm {
+	case MD5:
+		signedData.SetDigestAlgorithm(cms.OIDDigestAlgorithmMD5)
+	case SHA1:
+		signedData.SetDigestAlgorithm(cms.OIDDigestAlgorithmSHA1)
 	case SHA256:
 		signedData.SetDigestAlgorithm(cms.OIDDigestAlgorithmSHA256)
 	case SHA384:
