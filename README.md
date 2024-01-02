@@ -1,4 +1,7 @@
-# cryptutil
+# CryptUtil
+
 Cryptographic utility functions using CMS
-# Version
-v1.2.5
+
+## Version
+
+v1.2.6
