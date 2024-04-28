@@ -80,7 +80,7 @@ func NewCertificate(companyIdentifier string, url string, test ...bool) ([]byte,
 	return certificatePEM, privateKeyPEM, publicKeyPEM, nil
 }
 
-func NewCertObj(companyIdentifier string, url string, test ...bool) ([]byte, *crypto.PrivateKey, *crypto.PublicKey, error) {
+func NewCertObj(companyIdentifier string, url string, test ...bool) ([]byte, *rsa.PrivateKey, *rsa.PublicKey, error) {
 
 	// 生成一个新的 RSA 密钥对
 	privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
@@ -116,9 +116,7 @@ func NewCertObj(companyIdentifier string, url string, test ...bool) ([]byte, *cr
 	}
 	certificateBlock := pem.Block{Type: "CERTIFICATE", Bytes: certificateBytes}
 
-	priv := crypto.PrivateKey(privateKey)
-	pub := crypto.PublicKey(publicKey)
-	return pem.EncodeToMemory(&certificateBlock), &priv, &pub, nil
+	return pem.EncodeToMemory(&certificateBlock), privateKey, publicKey, nil
 }
 
 func LoadCertificate(certPem []byte) (*x509.Certificate, error) {
