@@ -59,7 +59,7 @@ func NewCertificate(companyIdentifier string, url string, test ...bool) ([]byte,
 		KeyUsage:              x509.KeyUsageCertSign | x509.KeyUsageDataEncipherment | x509.KeyUsageDigitalSignature | x509.KeyUsageContentCommitment,
 	}
 	// 使用证书模板和密钥对生成自签名证书
-	certificateBytes, err := x509.CreateCertificate(rand.Reader, &template, &template, pkixPublicKey, pkcs8PrivateKey)
+	certificateBytes, err := x509.CreateCertificate(rand.Reader, &template, &template, publicKey, privateKey)
 	if err != nil {
 		return nil, nil, nil, errors.WithStack(err)
 	}
