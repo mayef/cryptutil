@@ -77,7 +77,48 @@ func NewCertificate(companyIdentifier string, url string, test ...bool) ([]byte,
 		fmt.Println(string(publicKeyPEM))
 	}
 
-	return pem.EncodeToMemory(&certificateBlock), pem.EncodeToMemory(&privateKeyBlock), pem.EncodeToMemory(&publicKeyBlock), nil
+	return certificatePEM, privateKeyPEM, publicKeyPEM, nil
+}
+
+func NewCertObj(companyIdentifier string, url string, test ...bool) ([]byte, *crypto.PrivateKey, *crypto.PublicKey, error) {
+
+	// 生成一个新的 RSA 密钥对
+	privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		return nil, nil, nil, errors.WithStack(err)
+	}
+	publicKey := &privateKey.PublicKey
+
+	// 构造证书模板
+	randNum, err := rand.Int(rand.Reader, big.NewInt(4294967295))
+	if err != nil {
+		return nil, nil, nil, errors.WithStack(err)
+	}
+	template := x509.Certificate{
+		SerialNumber: randNum,
+		Subject: pkix.Name{
+			Country:            []string{"CN"},
+			StreetAddress:      []string{"Shanghai"},
+			Locality:           []string{"Shanghai"},
+			Organization:       []string{companyIdentifier},
+			OrganizationalUnit: []string{companyIdentifier},
+			CommonName:         url,
+		},
+		NotBefore:             time.Now(),
+		NotAfter:              time.Now().Add(3650 * 24 * time.Hour),
+		BasicConstraintsValid: true,
+		KeyUsage:              x509.KeyUsageCertSign | x509.KeyUsageDataEncipherment | x509.KeyUsageDigitalSignature | x509.KeyUsageContentCommitment,
+	}
+	// 使用证书模板和密钥对生成自签名证书
+	certificateBytes, err := x509.CreateCertificate(rand.Reader, &template, &template, publicKey, privateKey)
+	if err != nil {
+		return nil, nil, nil, errors.WithStack(err)
+	}
+	certificateBlock := pem.Block{Type: "CERTIFICATE", Bytes: certificateBytes}
+
+	priv := crypto.PrivateKey(privateKey)
+	pub := crypto.PublicKey(publicKey)
+	return pem.EncodeToMemory(&certificateBlock), &priv, &pub, nil
 }
 
 func LoadCertificate(certPem []byte) (*x509.Certificate, error) {
