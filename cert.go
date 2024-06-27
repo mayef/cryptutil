@@ -21,6 +21,36 @@ type Certificate struct {
 }
 
 func NewCertificate(companyIdentifier string, url string, test ...bool) ([]byte, []byte, []byte, error) {
+	info := &CertificateInfo{
+		CommonName:         url,
+		Organization:       companyIdentifier,
+		OrganizationalUnit: companyIdentifier,
+		Locality:           "Shanghai",
+		State:              "Shanghai",
+		Country:            "CN",
+		NotBefore:          time.Now(),
+		NotAfter:           time.Now().AddDate(10, 0, 0),
+		KeyUsage:           x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature | x509.KeyUsageContentCommitment | x509.KeyUsageDataEncipherment,
+	}
+	return NewCertificateWithInfo(info, test...)
+}
+
+type CertificateInfo struct {
+	// CN, OU, O, L, S, C
+	CommonName         string
+	Organization       string
+	OrganizationalUnit string
+	Locality           string
+	State              string
+	Country            string
+
+	NotBefore time.Time
+	NotAfter  time.Time
+
+	KeyUsage x509.KeyUsage
+}
+
+func NewCertificateWithInfo(info *CertificateInfo, test ...bool) ([]byte, []byte, []byte, error) {
 
 	// 生成一个新的 RSA 密钥对
 	privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
@@ -46,20 +76,20 @@ func NewCertificate(companyIdentifier string, url string, test ...bool) ([]byte,
 	template := x509.Certificate{
 		SerialNumber: randNum,
 		Subject: pkix.Name{
-			Country:            []string{"CN"},
-			StreetAddress:      []string{"Shanghai"},
-			Locality:           []string{"Shanghai"},
-			Organization:       []string{companyIdentifier},
-			OrganizationalUnit: []string{companyIdentifier},
-			CommonName:         url,
+			Country:            []string{info.Country},
+			StreetAddress:      []string{info.Locality},
+			Locality:           []string{info.Locality},
+			Organization:       []string{info.Organization},
+			OrganizationalUnit: []string{info.OrganizationalUnit},
+			CommonName:         info.CommonName,
 		},
-		NotBefore:             time.Now(),
-		NotAfter:              time.Now().Add(3650 * 24 * time.Hour),
+		NotBefore:             info.NotBefore,
+		NotAfter:              info.NotAfter,
 		BasicConstraintsValid: true,
-		KeyUsage:              x509.KeyUsageCertSign | x509.KeyUsageDataEncipherment | x509.KeyUsageDigitalSignature | x509.KeyUsageContentCommitment,
+		KeyUsage:              info.KeyUsage,
 	}
 	// 使用证书模板和密钥对生成自签名证书
-	certificateBytes, err := x509.CreateCertificate(rand.Reader, &template, &template, publicKey, privateKey)
+	certificateBytes, err := x509.CreateCertificate(rand.Reader, &template, &template, pkixPublicKey, pkcs8PrivateKey)
 	if err != nil {
 		return nil, nil, nil, errors.WithStack(err)
 	}
@@ -77,46 +107,7 @@ func NewCertificate(companyIdentifier string, url string, test ...bool) ([]byte,
 		fmt.Println(string(publicKeyPEM))
 	}
 
-	return certificatePEM, privateKeyPEM, publicKeyPEM, nil
-}
-
-func NewCertObj(companyIdentifier string, url string, test ...bool) ([]byte, *rsa.PrivateKey, *rsa.PublicKey, error) {
-
-	// 生成一个新的 RSA 密钥对
-	privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
-	if err != nil {
-		return nil, nil, nil, errors.WithStack(err)
-	}
-	publicKey := &privateKey.PublicKey
-
-	// 构造证书模板
-	randNum, err := rand.Int(rand.Reader, big.NewInt(4294967295))
-	if err != nil {
-		return nil, nil, nil, errors.WithStack(err)
-	}
-	template := x509.Certificate{
-		SerialNumber: randNum,
-		Subject: pkix.Name{
-			Country:            []string{"CN"},
-			StreetAddress:      []string{"Shanghai"},
-			Locality:           []string{"Shanghai"},
-			Organization:       []string{companyIdentifier},
-			OrganizationalUnit: []string{companyIdentifier},
-			CommonName:         url,
-		},
-		NotBefore:             time.Now(),
-		NotAfter:              time.Now().Add(3650 * 24 * time.Hour),
-		BasicConstraintsValid: true,
-		KeyUsage:              x509.KeyUsageCertSign | x509.KeyUsageDataEncipherment | x509.KeyUsageDigitalSignature | x509.KeyUsageContentCommitment,
-	}
-	// 使用证书模板和密钥对生成自签名证书
-	certificateBytes, err := x509.CreateCertificate(rand.Reader, &template, &template, publicKey, privateKey)
-	if err != nil {
-		return nil, nil, nil, errors.WithStack(err)
-	}
-	certificateBlock := pem.Block{Type: "CERTIFICATE", Bytes: certificateBytes}
-
-	return pem.EncodeToMemory(&certificateBlock), privateKey, publicKey, nil
+	return pem.EncodeToMemory(&certificateBlock), pem.EncodeToMemory(&privateKeyBlock), pem.EncodeToMemory(&publicKeyBlock), nil
 }
 
 func LoadCertificate(certPem []byte) (*x509.Certificate, error) {
